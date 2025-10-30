@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonify - Next Generation Roblox Executor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #07090c;
+            color: #cbcfd3;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(5, 10, 15, 0.95);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            padding: 16px 24px;
+            min-width: 280px;
+            box-shadow: 
+                0 0 20px rgba(0, 229, 255, 0.4),
+                0 0 40px rgba(0, 179, 255, 0.2),
+                0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            pointer-events: all;
+            will-change: transform, opacity;
+        }
+
+        .toast-message {
+            font-weight: 600;
+            font-size: 15px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+            letter-spacing: 0.3px;
+        }
+
+        .toast-enter {
+            animation: toastEnter 600ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        .toast-glow {
+            animation: toastGlow 2s ease-in-out infinite;
+        }
+
+        .toast-exit {
+            animation: toastExit 600ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes toastEnter {
+            from {
+                transform: translateX(60px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes toastGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 20px rgba(0, 229, 255, 0.4),
+                    0 0 40px rgba(0, 179, 255, 0.2),
+                    0 8px 32px rgba(0, 0, 0, 0.5);
+                border-color: rgba(0, 229, 255, 0.3);
+            }
+            50% {
+                box-shadow: 
+                    0 0 30px rgba(0, 229, 255, 0.6),
+                    0 0 60px rgba(0, 179, 255, 0.3),
+                    0 8px 32px rgba(0, 0, 0, 0.5);
+                border-color: rgba(0, 229, 255, 0.5);
+            }
+        }
+
+        @keyframes toastExit {
+            to {
+                transform: translateX(60px);
+                opacity: 0;
+                filter: blur(2px);
+            }
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(7, 9, 12, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 24px;
+        }
+
+        .moon-logo {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 0 8px rgba(88, 160, 240, 0.6));
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 8px rgba(88, 160, 240, 0.6)); }
+            to { filter: drop-shadow(0 0 16px rgba(88, 160, 240, 0.8)); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #cbcfd3;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #58a0f0;
+        }
+
+        .nav-links .btn-discord {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+            margin-left: 16px;
+        }
+
+        /* Background Effects */
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-orbs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: #58a0f0;
+            top: -200px;
+            right: -100px;
+            animation: float 40s infinite ease-in-out;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #615585;
+            bottom: -150px;
+            left: -100px;
+            animation: float 30s infinite ease-in-out reverse;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: #58a0f0;
+            top: 50%;
+            left: 50%;
+            animation: float 50s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Container */
+        .site-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 120px 20px 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 0 80px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(88, 160, 240, 0.1);
+            border: 1px solid rgba(88, 160, 240, 0.2);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-icon {
+            font-size: 16px;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #58a0f0 0%, #7bb3f5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: #8a90a0;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        /* Buttons */
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .btn-primary, .btn-outline {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            border: none;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #58a0f0 0%, #4a8cd8 100%);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(88, 160, 240, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(88, 160, 240, 0.5);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Shine Effect */
+        .btn-primary::before,
+        .btn-outline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-primary:hover::before,
+        .btn-outline:hover::before {
+            left: 100%;
+        }
+
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #8a90a0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header p::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #58a0f0, #7bb3f5);
+            border-radius: 2px;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 80px 0;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            font-weight: 600;
+            color: #fff;
+            font-size: 18px;
+            background: rgba(88, 160, 240, 0.1);
+        }
+
+        th:first-child {
+            color: #58a0f0;
+            font-weight: 700;
+        }
+
+        td {
+            color: #8a90a0;
+            font-size: 16px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 0;
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .faq-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(88, 160, 240, 0.3);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+            color: #8a90a0;
+            padding-top: 0;
+            opacity: 0;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            padding-top: 16px;
+            opacity: 1;
+        }
+
+        .faq-icon {
+            transition: transform 0.3s ease;
+            color: #58a0f0;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Info Cards */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(88, 160, 240, 0.3);
+            box-shadow: 0 8px 30px rgba(88, 160, 240, 0.2);
+        }
+
+        .info-card h3 {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .info-card p {
+            color: #8a90a0;
+            margin-bottom: 24px;
+        }
+
+        .info-card .btn-outline {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8a90a0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 80px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 12px 20px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .moon-logo {
+                width: 24px;
+                height: 24px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            h1 {
+                font-size: 48px;
+            }
+
+            .section-header h2 {
+                font-size: 36px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary, .btn-outline {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .btn-discord {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .toast-container {
+                top: 60px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .toast {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="#" class="logo">
+            <svg class="moon-logo" viewBox="0 0 32 32" fill="none">
+                <defs>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge> 
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <path d="M 16 0 C 7 0 3 4 3 13 S 7 26 16 26 29 22 29 13 25 0 16 0 Z M 16 2 C 9 2 5 6 5 13 S 9 24 16 24 27 20 27 13 23 2 16 2 Z" fill="#58a0f0" filter="url(#glow)"/>
+            </svg>
+            moonify.cc
+        </a>
+        <ul class="nav-links">
+            <li><a href="#comparison">Compare</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="updatelog.html">Updates</a></li>
+            <li><a href="devinfo.html">Info</a></li>
+            <li><a href="https://discord.gg/DhMs4ASksY" class="btn-outline btn-discord">Discord</a></li>
+        </ul>
+    </nav>
+
+    <div class="site-wrapper">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-badge">
+                    <span class="badge-icon">🌙</span>
+                    <span class="badge-text">Free, keyless, and undetected</span>
+                </div>
+                <h1>
+                    <div class="gradient-text">Moonify</div>
+                    Next Generation
+                </h1>
+                <p class="hero-description">
+                    Welcome to Moonify, the best Roblox executor! Completely FREE with less than 1 minute setup. 
+                    This was a passion project, so we don't charge money! Join the Discord for help!
+                </p>
+                <div class="hero-actions">
+                    <a href="https://rekonise.com/moonify_200zip-c34ks" class="btn-primary">
+                        <span>Download v2.00</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 12L3 7L4.4 5.6L7 8.2V0H9V8.2L11.6 5.6L13 7L8 12ZM2 16C1.45 16 0.979167 15.8042 0.5875 15.4125C0.195833 15.0208 0 14.55 0 14V11H2V14H14V11H16V14C16 14.55 15.8042 15.0208 15.4125 15.4125C15.0208 15.8042 14.55 16 14 16H2Z" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a href="https://discord.gg/Anhp2JSyAp" class="btn-outline">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M16.9308 4.65373C15.6561 4.06679 14.2892 3.63299 12.8599 3.3797C12.8339 3.37493 12.8079 3.38688 12.7945 3.41078C12.6187 3.71741 12.4239 4.11053 12.2876 4.42155C10.7503 4.18915 9.22099 4.18915 7.71527 4.42155C7.57887 4.10333 7.37707 3.71741 7.20048 3.41078C7.18707 3.38765 7.16107 3.37571 7.13504 3.3797C5.70659 3.63223 4.33963 4.06603 3.06411 4.65373C3.05307 4.65849 3.04361 4.66607 3.03732 4.67606C0.444493 8.54558 -0.265792 12.3193 0.0826501 16.0453C0.0842267 16.0637 0.0944749 16.0813 0.108665 16.0921C1.81934 17.3622 3.47642 18.1467 5.10273 18.6669C5.12876 18.6748 5.15634 18.6653 5.1729 18.6438C5.55761 18.1072 5.90054 17.5417 6.19456 16.9473C6.21192 16.9122 6.19535 16.8708 6.15989 16.8573C5.61594 16.6546 5.098 16.4093 4.59977 16.1335C4.56037 16.1104 4.55721 16.0541 4.59347 16.0269C4.69831 15.9482 4.80318 15.8663 4.9033 15.7836C4.92141 15.7685 4.94665 15.7653 4.96794 15.7748C8.24107 17.2811 11.7846 17.2811 15.0191 15.7748C15.0404 15.7645 15.0657 15.7677 15.0846 15.7828C15.1847 15.8655 15.2895 15.9482 15.3952 16.0269C15.4314 16.0541 15.4291 16.1104 15.3897 16.1335C14.8914 16.4148 14.3735 16.6546 13.8288 16.8565C13.7933 16.87 13.7775 16.9122 13.7949 16.9473C14.0952 17.5409 14.4381 18.1064 14.8157 18.643C14.8315 18.6653 14.8599 18.6748 14.8859 18.6669C16.5201 18.1467 18.1772 17.3622 19.8879 16.0921C19.9028 16.0813 19.9123 16.0645 19.9139 16.0461C20.3309 11.7345 19.2154 7.99368 16.9568 4.67683C16.9513 4.66607 16.9419 4.65849 16.9308 4.65373ZM6.68335 13.7422C5.69792 13.7422 4.88594 12.8412 4.88594 11.7289C4.88594 10.6167 5.68217 9.71563 6.68335 9.71563C7.69239 9.71563 8.49651 10.6246 8.48073 11.7289C8.48073 12.8412 7.68451 13.7422 6.68335 13.7422ZM13.329 13.7422C12.3436 13.7422 11.5316 12.8412 11.5316 11.7289C11.5316 10.6167 12.3278 9.71563 13.329 9.71563C14.338 9.71563 15.1421 10.6246 15.1264 11.7289C15.1264 12.8412 14.338 13.7422 13.329 13.7422Z" fill="currentColor"/>
+                        </svg>
+                        <span>Join Discord</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Comparison Section -->
+            <section id="comparison" class="comparison-section">
+                <div class="section-header">
+                    <h2>Comparing to other executors</h2>
+                    <p>See how Moonify stands out</p>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>𝑴𝒐𝒐𝒏𝒊𝒇𝒚</th>
+                                <th>Plutora</th>
+                                <th>JJsploit</th>
+                                <th>LX63</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>STABLE: 🟢</td>
+                                <td>STABLE: 🔴</td>
+                                <td>STABLE: 🔴</td>
+                                <td>STABLE: 🟢</td>
+                            </tr>
+                            <tr>
+                                <td>FAST INJECTION: 🟢</td>
+                                <td>FAST INJECTION: 🔴</td>
+                                <td>FAST INJECTION: 🟢</td>
+                                <td>FAST INJECTION: 🔴</td>
+                            </tr>
+                            <tr>
+                                <td>HIGH UNC: 🟢</td>
+                                <td>HIGH UNC: 🔴</td>
+                                <td>HIGH UNC: 🔴</td>
+                                <td>HIGH UNC: 🟢</td>
+                            </tr>
+                            <tr>
+                                <td>UNDETECTED: 🟢</td>
+                                <td>UNDETECTED: 🔴</td>
+                                <td>UNDETECTED: 🔴</td>
+                                <td>UNDETECTED: 🔴</td>
+                            </tr>
+                            <tr>
+                                <td>PREMIUM CODE: 🟢</td>
+                                <td>PREMIUM CODE: 🟢</td>
+                                <td>PREMIUM CODE: 🔴</td>
+                                <td>PREMIUM CODE: 🔴</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section id="faq" class="faq-section">
+                <div class="section-header">
+                    <h2>Commonly Asked Questions</h2>
+                    <p>Everything you need to know</p>
+                </div>
+                <div class="faq-container">
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>Is Moonify safe?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! Moonify is safe and designed with security in mind.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>Is Moonify undetected?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Moonify is undetected with regularly antiban updates to ensure safety.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>Is Moonify keyless?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! Moonify is keyless and free with no extra payments.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>What level of execution is Moonify?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Moonify supports Level 8 execution, which means it can run the most advanced and complex scripts available, including those that require high-level game access and manipulation.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>Will Moonify slow down my computer?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>No! Moonify is designed to be lightweight with minimal resource usage. It won't impact your system performance and runs efficiently in the background.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>Can I use Moonify on any game?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! Moonify works across all Roblox games thanks to its Level 8 execution capabilities and stable internal architecture. Some games may have additional protections, but Moonify handles most scenarios effectively.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" onclick="toggleFAQ(this)">
+                        <div class="faq-question">
+                            <span>What if I encounter a bug or need help?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our community provides excellent support through Discord and forums. Most common issues are resolved quickly, and our stable architecture minimizes problems.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Additional Info -->
+            <section>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <h3>Update Log</h3>
+                        <p style="color: #8a90a0; margin-bottom: 24px;">Check out the latest updates and changes. Recent: v1.91 - Enhanced Security Patch.</p>
+                        <a href="updatelog.html" class="btn-outline">
+                            <svg width="17" height="27" viewBox="0 0 17 27" fill="none">
+                                <circle cx="8.5" cy="8.5" r="8" stroke="currentColor"/>
+                                <circle cx="8.5" cy="18.5" r="8" stroke="currentColor"/>
+                            </svg>
+                            <span>View Logs</span>
+                        </a>
+                    </div>
+                    <div class="info-card">
+                        <h3>Dev Info</h3>
+                        <p style="color: #8a90a0; margin-bottom: 24px;">Learn more about the development. We use open source bases modified for safety.</p>
+                        <a href="devinfo.html" class="btn-outline">
+                            <svg width="17" height="27" viewBox="0 0 17 27" fill="none">
+                                <path d="M2 14L7 19L15 8" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>More Info</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>© 2025 Moon Softworks. All rights reserved.</p>
+                <p style="color: #8a90a0;">website dev credits: "@torsotracer and @sadman_marness"</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Toast Notification Function
+        let toastContainer = null;
+
+        function showMoonifyToast(message) {
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-enter';
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = 'toast-message';
+            messageEl.textContent = message;
+            
+            toast.appendChild(messageEl);
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-glow');
+            }, 600);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-glow');
+                toast.classList.add('toast-exit');
+                
+                setTimeout(() => {
+                    toast.remove();
+                    if (toastContainer.children.length === 0) {
+                        toastContainer.remove();
+                        toastContainer = null;
+                    }
+                }, 600);
+            }, 4600);
+        }
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            element.classList.toggle('active');
+        }
+
+        // Close other FAQs when opening one
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    if (other !== this && other.classList.contains('active')) {
+                        other.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Show welcome toast on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                showMoonifyToast('Welcome to Moonify!');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
