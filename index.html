@@ -933,6 +933,58 @@
 </body>
 </html>
 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verifying CAPTCHA…</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body {
+      background-color: #0e0e0e;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .captcha-box {
+      text-align: center;
+    }
+    #enter-btn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #00c3ff;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="captcha-box">
+    <h2>Verifying CAPTCHA…</h2>
+    <div class="g-recaptcha"
+         data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
+         data-callback="captchaPassed"
+         data-theme="dark">
+    </div>
+    <button id="enter-btn" onclick="window.location.href='main.html'">Enter Site</button>
+  </div>
+
+  <script>
+    function captchaPassed() {
+      document.getElementById("enter-btn").style.display = "inline-block";
+    }
+  </script>
+</body>
+</html>
+
 
 
 
