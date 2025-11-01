@@ -671,13 +671,26 @@
                     Welcome to Moonify, the best Roblox executor! Completely FREE with less than 1 minute setup. 
                     This was a passion project, so we don't charge money! Join the Discord for help!
                 </p>
-                <div class="hero-actions">
-                    <a href="https://www.dropbox.com/scl/fi/4sxykpikyvjcrgtzv0s89/Moonify_2.10.zip?rlkey=3aoqfom7xk6n4ki4t9jktqawx&st=a5vrq0km&dl=1" class="btn-primary">
-                        <span>Download v2.10</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M8 12L3 7L4.4 5.6L7 8.2V0H9V8.2L11.6 5.6L13 7L8 12ZM2 16C1.45 16 0.979167 15.8042 0.5875 15.4125C0.195833 15.0208 0 14.55 0 14V11H2V14H14V11H16V14C16 14.55 15.8042 15.0208 15.4125 15.4125C15.0208 15.8042 14.55 16 14 16H2Z" fill="currentColor"/>
-                        </svg>
-                    </a>
+           <div class="hero-actions">
+  <form id="captcha-form" action="https://www.dropbox.com/scl/fi/4sxykpikyvjcrgtzv0s89/Moonify_2.10.zip?rlkey=3aoqfom7xk6n4ki4t9jktqawx&st=a5vrq0km&dl=1" method="GET">
+    <button class="btn-primary g-recaptcha"
+      data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
+      data-callback="onSubmit"
+      data-action="submit">
+      <span>Download v2.10</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 12L3 7L4.4 5.6L7 8.2V0H9V8.2L11.6 5.6L13 7L8 12ZM2 16C1.45 16 0.979167 15.8042 0.5875 15.4125C0.195833 15.0208 0 14.55 0 14V11H2V14H14V11H16V14C16 14.55 15.8042 15.0208 15.4125 15.4125C15.0208 15.8042 14.55 16 14 16H2Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </form>
+</div>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+  function onSubmit(token) {
+    document.getElementById('captcha-form').submit();
+  }
+</script>
                     <a href="https://discord.gg/Anhp2JSyAp" class="btn-outline">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M16.9308 4.65373C15.6561 4.06679 14.2892 3.63299 12.8599 3.3797C12.8339 3.37493 12.8079 3.38688 12.7945 3.41078C12.6187 3.71741 12.4239 4.11053 12.2876 4.42155C10.7503 4.18915 9.22099 4.18915 7.71527 4.42155C7.57887 4.10333 7.37707 3.71741 7.20048 3.41078C7.18707 3.38765 7.16107 3.37571 7.13504 3.3797C5.70659 3.63223 4.33963 4.06603 3.06411 4.65373C3.05307 4.65849 3.04361 4.66607 3.03732 4.67606C0.444493 8.54558 -0.265792 12.3193 0.0826501 16.0453C0.0842267 16.0637 0.0944749 16.0813 0.108665 16.0921C1.81934 17.3622 3.47642 18.1467 5.10273 18.6669C5.12876 18.6748 5.15634 18.6653 5.1729 18.6438C5.55761 18.1072 5.90054 17.5417 6.19456 16.9473C6.21192 16.9122 6.19535 16.8708 6.15989 16.8573C5.61594 16.6546 5.098 16.4093 4.59977 16.1335C4.56037 16.1104 4.55721 16.0541 4.59347 16.0269C4.69831 15.9482 4.80318 15.8663 4.9033 15.7836C4.92141 15.7685 4.94665 15.7653 4.96794 15.7748C8.24107 17.2811 11.7846 17.2811 15.0191 15.7748C15.0404 15.7645 15.0657 15.7677 15.0846 15.7828C15.1847 15.8655 15.2895 15.9482 15.3952 16.0269C15.4314 16.0541 15.4291 16.1104 15.3897 16.1335C14.8914 16.4148 14.3735 16.6546 13.8288 16.8565C13.7933 16.87 13.7775 16.9122 13.7949 16.9473C14.0952 17.5409 14.4381 18.1064 14.8157 18.643C14.8315 18.6653 14.8599 18.6748 14.8859 18.6669C16.5201 18.1467 18.1772 17.3622 19.8879 16.0921C19.9028 16.0813 19.9123 16.0645 19.9139 16.0461C20.3309 11.7345 19.2154 7.99368 16.9568 4.67683C16.9513 4.66607 16.9419 4.65849 16.9308 4.65373ZM6.68335 13.7422C5.69792 13.7422 4.88594 12.8412 4.88594 11.7289C4.88594 10.6167 5.68217 9.71563 6.68335 9.71563C7.69239 9.71563 8.49651 10.6246 8.48073 11.7289C8.48073 12.8412 7.68451 13.7422 6.68335 13.7422ZM13.329 13.7422C12.3436 13.7422 11.5316 12.8412 11.5316 11.7289C11.5316 10.6167 12.3278 9.71563 13.329 9.71563C14.338 9.71563 15.1421 10.6246 15.1264 11.7289C15.1264 12.8412 14.338 13.7422 13.329 13.7422Z" fill="currentColor"/>
@@ -930,39 +943,8 @@
 </body>
 </html>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Verifying CAPTCHA…</title>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <style>
-      body {
-        background: #0e0e0e;
-        color: white;
-        font-family: sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-      }
-      .captcha-box {
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="captcha-box">
-      <h2>Verifying CAPTCHA…</h2>
-      <form action="verify.php" method="POST">
-        <div class="g-recaptcha" data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"></div>
-        <br>
-        <input type="submit" value="Continue">
-      </form>
-    </div>
-  </body>
-</html>
+
+
 
 
 
