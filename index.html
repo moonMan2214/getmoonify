@@ -934,8 +934,9 @@
 </html>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Verifying Access…</title>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
@@ -960,31 +961,37 @@
       display: none;
       padding: 40px;
     }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #00c3ff;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div id="recaptcha-screen">
     <h2>Verifying Access…</h2>
-    <form id="recaptcha-form" method="POST">
+    <form id="recaptcha-form">
       <div class="g-recaptcha"
            data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
            data-callback="recaptchaPassed"
            data-theme="dark">
       </div>
-      <input type="hidden" name="g-recaptcha-response" id="recaptcha-token">
     </form>
   </div>
 
   <div id="site-content">
-    <!-- Your actual site content goes here -->
     <h1>Welcome to the site</h1>
     <p>This content is hidden until reCAPTCHA is passed.</p>
   </div>
 
   <script>
     async function recaptchaPassed(token) {
-      document.getElementById("recaptcha-token").value = token;
-
       const res = await fetch("/verify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -996,7 +1003,7 @@
         document.getElementById("recaptcha-screen").style.display = "none";
         document.getElementById("site-content").style.display = "block";
       } else {
-        alert("reCAPTCHA failed. Try again.");
+        alert("CAPTCHA failed. Try again.");
       }
     }
   </script>
