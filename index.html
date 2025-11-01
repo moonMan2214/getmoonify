@@ -936,50 +936,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Verifying CAPTCHA…</title>
+  <title>Moonify Access</title>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
-    body {
-      background-color: #0e0e0e;
+    #captcha-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #0e0e0e;
       color: white;
-      font-family: sans-serif;
+      z-index: 9999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
     }
-    .captcha-box {
-      text-align: center;
-    }
-    #enter-btn {
+    #main-content {
       display: none;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #00c3ff;
-      color: black;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="captcha-box">
+  <div id="captcha-overlay">
     <h2>Verifying CAPTCHA…</h2>
     <div class="g-recaptcha"
          data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
          data-callback="captchaPassed"
          data-theme="dark">
     </div>
-    <button id="enter-btn" onclick="window.location.href='main.html'">Enter Site</button>
+  </div>
+
+  <div id="main-content">
+    <!-- Your full site goes here -->
+    <div class="hero-actions">
+      <a href="https://www.dropbox.com/scl/fi/4sxykpikyvjcrgtzv0s89/Moonify_2.10.zip?rlkey=3aoqfom7xk6n4ki4t9jktqawx&st=a5vrq0km&dl=1" class="btn-primary">
+        <span>Download v2.10</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 12L3 7L4.4 5.6L7 8.2V0H9V8.2L11.6 5.6L13 7L8 12ZM2 16C1.45 16 0.979167 15.8042 0.5875 15.4125C0.195833 15.0208 0 14.55 0 14V11H2V14H14V11H16V14C16 14.55 15.8042 15.0208 15.4125 15.4125C15.0208 15.8042 14.55 16 14 16H2Z" fill="currentColor"/>
+        </svg>
+      </a>
+    </div>
+    <!-- Add more site content here -->
   </div>
 
   <script>
     function captchaPassed() {
-      document.getElementById("enter-btn").style.display = "inline-block";
+      document.getElementById("captcha-overlay").style.display = "none";
+      document.getElementById("main-content").style.display = "block";
     }
   </script>
 </body>
