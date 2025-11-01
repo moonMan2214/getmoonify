@@ -933,74 +933,60 @@
 </body>
 </html>
 
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Verifying Access…</title>
+  <title>Access Gate</title>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: sans-serif;
       background: #0e0e0e;
       color: white;
+      font-family: sans-serif;
     }
-    #recaptcha-screen {
+    #gate {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: #0e0e0e;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
       z-index: 9999;
+      background: #0e0e0e;
     }
-    #site-content {
+    #main {
       display: none;
       padding: 40px;
     }
   </style>
 </head>
 <body>
-  <div id="recaptcha-screen">
+  <div id="gate">
     <h2>Verifying Access…</h2>
-    <div class="g-recaptcha"
-         data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
-         data-theme="dark">
-    </div>
+    <div class="g-recaptcha" data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP" data-theme="dark"></div>
   </div>
 
-  <div id="site-content">
-    <h1>Welcome to the site</h1>
-    <p>This content is hidden until reCAPTCHA is passed.</p>
+  <div id="main">
+    <h1>Welcome</h1>
+    <p>You're in.</p>
   </div>
 
   <script>
-    const checkToken = () => {
-      const tokenField = document.querySelector('.g-recaptcha-response');
-      if (tokenField && tokenField.value.trim().length > 0) {
-        document.getElementById("recaptcha-screen").style.display = "none";
-        document.getElementById("site-content").style.display = "block";
-        return true;
+    const interval = setInterval(() => {
+      const frame = document.querySelector('iframe[src*="recaptcha"]');
+      if (!frame) return;
+
+      const box = frame.contentWindow?.document?.querySelector('.recaptcha-checkbox-checked');
+      if (box) {
+        document.getElementById('gate').style.display = 'none';
+        document.getElementById('main').style.display = 'block';
+        clearInterval(interval);
       }
-      return false;
-    };
-
-    const observer = new MutationObserver(() => {
-      if (checkToken()) observer.disconnect();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-
-    // Fallback loop in case MutationObserver misses it
-    setInterval(checkToken, 500);
+    }, 300);
   </script>
 </body>
 </html>
+
 
