@@ -957,15 +957,9 @@
       justify-content: center;
       z-index: 9999;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #00c3ff;
-      color: black;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
+    #site-content {
+      display: none;
+      padding: 40px;
     }
   </style>
 </head>
@@ -981,8 +975,14 @@
     </form>
   </div>
 
+  <div id="site-content">
+    <h1>Welcome to the site</h1>
+    <p>This content is hidden until reCAPTCHA is passed.</p>
+  </div>
+
   <script>
     async function recaptchaPassed(token) {
+      // Wait for server to confirm token is valid
       const res = await fetch("/verify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -991,10 +991,12 @@
 
       const result = await res.json();
       if (result.success) {
-        window.location.href = "index.html"; // 👈 redirect to your real site
+        // Only now—after full verification—hide gate and show site
+        document.getElementById("recaptcha-screen").style.display = "none";
+        document.getElementById("site-content").style.display = "block";
       } else {
         alert("CAPTCHA failed. Try again.");
-        grecaptcha.reset(); // reset the box
+        grecaptcha.reset();
       }
     }
   </script>
