@@ -936,57 +936,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Moonify Access</title>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <title>Verifying Access…</title>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
-    #captcha-overlay {
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #0e0e0e;
+      color: white;
+    }
+    #captcha-screen {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
       background: #0e0e0e;
-      color: white;
-      z-index: 9999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      z-index: 9999;
     }
-    #main-content {
+    #site-content {
       display: none;
+      padding: 40px;
     }
   </style>
 </head>
 <body>
-  <div id="captcha-overlay">
-    <h2>Verifying CAPTCHA…</h2>
-    <div class="g-recaptcha"
-         data-sitekey="6LfdnP4rAAAAAGT660EBmw1lvL0oejBLh5lrmh1g"
-         data-callback="captchaPassed"
-         data-theme="dark">
-    </div>
+  <div id="captcha-screen">
+    <h2>Verifying Access…</h2>
+    <form id="captcha-form" method="POST">
+      <div class="cf-turnstile"
+           data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
+           data-callback="captchaPassed">
+      </div>
+      <input type="hidden" name="cf-turnstile-response" id="captcha-token">
+    </form>
   </div>
 
-  <div id="main-content">
-    <!-- Your full site goes here -->
-    <div class="hero-actions">
-      <a href="https://www.dropbox.com/scl/fi/4sxykpikyvjcrgtzv0s89/Moonify_2.10.zip?rlkey=3aoqfom7xk6n4ki4t9jktqawx&st=a5vrq0km&dl=1" class="btn-primary">
-        <span>Download v2.10</span>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M8 12L3 7L4.4 5.6L7 8.2V0H9V8.2L11.6 5.6L13 7L8 12ZM2 16C1.45 16 0.979167 15.8042 0.5875 15.4125C0.195833 15.0208 0 14.55 0 14V11H2V14H14V11H16V14C16 14.55 15.8042 15.0208 15.4125 15.4125C15.0208 15.8042 14.55 16 14 16H2Z" fill="currentColor"/>
-        </svg>
-      </a>
-    </div>
-    <!-- Add more site content here -->
+  <div id="site-content">
+    <!-- Your actual site content goes here -->
+    <h1>Welcome to the site</h1>
+    <p>This content is hidden until CAPTCHA is passed.</p>
   </div>
 
   <script>
-    function captchaPassed() {
-      document.getElementById("captcha-overlay").style.display = "none";
-      document.getElementById("main-content").style.display = "block";
+    async function captchaPassed(token) {
+      document.getElementById("captcha-token").value = token;
+
+      const res = await fetch("/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `cf-turnstile-response=${token}`
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        document.getElementById("captcha-screen").style.display = "none";
+        document.getElementById("site-content").style.display = "block";
+      } else {
+        alert("CAPTCHA failed. Try again.");
+      }
     }
   </script>
 </body>
 </html>
+
 
 
 
