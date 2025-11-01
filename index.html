@@ -937,7 +937,7 @@
 <html>
 <head>
   <title>Verifying Access…</title>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       margin: 0;
@@ -945,7 +945,7 @@
       background: #0e0e0e;
       color: white;
     }
-    #captcha-screen {
+    #recaptcha-screen {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
@@ -963,45 +963,45 @@
   </style>
 </head>
 <body>
-  <div id="captcha-screen">
+  <div id="recaptcha-screen">
     <h2>Verifying Access…</h2>
-    <form id="captcha-form" method="POST">
-      <div class="cf-turnstile"
+    <form id="recaptcha-form" method="POST">
+      <div class="g-recaptcha"
            data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
-           data-callback="captchaPassed">
+           data-callback="recaptchaPassed"
+           data-theme="dark">
       </div>
-      <input type="hidden" name="cf-turnstile-response" id="captcha-token">
+      <input type="hidden" name="g-recaptcha-response" id="recaptcha-token">
     </form>
   </div>
 
   <div id="site-content">
     <!-- Your actual site content goes here -->
     <h1>Welcome to the site</h1>
-    <p>This content is hidden until CAPTCHA is passed.</p>
+    <p>This content is hidden until reCAPTCHA is passed.</p>
   </div>
 
   <script>
-    async function captchaPassed(token) {
-      document.getElementById("captcha-token").value = token;
+    async function recaptchaPassed(token) {
+      document.getElementById("recaptcha-token").value = token;
 
       const res = await fetch("/verify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `cf-turnstile-response=${token}`
+        body: `g-recaptcha-response=${token}`
       });
 
       const result = await res.json();
       if (result.success) {
-        document.getElementById("captcha-screen").style.display = "none";
+        document.getElementById("recaptcha-screen").style.display = "none";
         document.getElementById("site-content").style.display = "block";
       } else {
-        alert("CAPTCHA failed. Try again.");
+        alert("reCAPTCHA failed. Try again.");
       }
     }
   </script>
 </body>
 </html>
-
 
 
 
