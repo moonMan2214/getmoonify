@@ -979,24 +979,28 @@
   </div>
 
   <script>
-    // Watch for checkbox flipping green
-    const observer = new MutationObserver(() => {
-      const recaptchaBadge = document.querySelector('.g-recaptcha-response');
-      if (recaptchaBadge && recaptchaBadge.value.trim().length > 0) {
-        // Token exists → checkbox flipped green
+    const checkToken = () => {
+      const tokenField = document.querySelector('.g-recaptcha-response');
+      if (tokenField && tokenField.value.trim().length > 0) {
         document.getElementById("recaptcha-screen").style.display = "none";
         document.getElementById("site-content").style.display = "block";
-        observer.disconnect();
+        return true;
       }
+      return false;
+    };
+
+    const observer = new MutationObserver(() => {
+      if (checkToken()) observer.disconnect();
     });
 
     observer.observe(document.body, {
       childList: true,
       subtree: true
     });
+
+    // Fallback loop in case MutationObserver misses it
+    setInterval(checkToken, 500);
   </script>
 </body>
 </html>
-
-
 
