@@ -979,54 +979,9 @@
 
   <script>
     function onVerified(token) {
-      fetch('/verify-captcha', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById('gate').style.display = 'none';
-          document.getElementById('main').style.display = 'block';
-        } else {
-          alert('CAPTCHA failed. Try again.');
-        }
-      });
-    }
-  </script>
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Access Gate</title>
-  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-</head>
-<body>
-  <div class="h-captcha"
-       data-sitekey="3c7c27e0-0c96-46c0-abd4-100271821db4"
-       data-callback="onVerified">
-  </div>
-
-  <script>
-    function onVerified(token) {
-      fetch('/verify-captcha', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          // Show your content or trigger splash
-          alert('Verified!');
-        } else {
-          alert('CAPTCHA failed.');
-        }
-      });
+      // Visual-only pass — no server verification
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
     }
   </script>
 </body>
