@@ -930,5 +930,40 @@
 </body>
 </html>
 
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Verifying CAPTCHA…</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+      body {
+        background: #0e0e0e;
+        color: white;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .captcha-box {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="captcha-box">
+      <h2>Verifying CAPTCHA…</h2>
+      <form action="verify.php" method="POST">
+        <div class="g-recaptcha" data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"></div>
+        <br>
+        <input type="submit" value="Continue">
+      </form>
+    </div>
+  </body>
+</html>
+
+
 
 
