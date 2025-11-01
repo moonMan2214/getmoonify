@@ -934,6 +934,69 @@
 </html>
 
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifying Access…</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #0e0e0e;
+      color: white;
+    }
+    #recaptcha-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #0e0e0e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #site-content {
+      display: none;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div id="recaptcha-screen">
+    <h2>Verifying Access…</h2>
+    <div class="g-recaptcha"
+         data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
+         data-theme="dark">
+    </div>
+  </div>
+
+  <div id="site-content">
+    <h1>Welcome to the site</h1>
+    <p>This content is hidden until reCAPTCHA is passed.</p>
+  </div>
+
+  <script>
+    // Watch for checkbox flipping green
+    const observer = new MutationObserver(() => {
+      const recaptchaBadge = document.querySelector('.g-recaptcha-response');
+      if (recaptchaBadge && recaptchaBadge.value.trim().length > 0) {
+        // Token exists → checkbox flipped green
+        document.getElementById("recaptcha-screen").style.display = "none";
+        document.getElementById("site-content").style.display = "block";
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  </script>
+</body>
+</html>
 
 
 
