@@ -1037,13 +1037,10 @@
 <body>
   <div id="recaptcha-screen">
     <h2>Verifying Access…</h2>
-    <form>
-      <div class="g-recaptcha"
-           data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
-           data-callback="recaptchaPassed"
-           data-theme="dark">
-      </div>
-    </form>
+    <div class="g-recaptcha"
+         data-sitekey="6LfdnP4rAAAAAFATdv9LbC-cL6qg0YqAUQVDGBYP"
+         data-theme="dark">
+    </div>
   </div>
 
   <div id="site-content">
@@ -1052,14 +1049,25 @@
   </div>
 
   <script>
-    function recaptchaPassed(token) {
-      // Google says it's valid—hide gate, show site
-      document.getElementById("recaptcha-screen").style.display = "none";
-      document.getElementById("site-content").style.display = "block";
-    }
+    // Watch for checkbox flipping green
+    const observer = new MutationObserver(() => {
+      const recaptchaBadge = document.querySelector('.g-recaptcha-response');
+      if (recaptchaBadge && recaptchaBadge.value.trim().length > 0) {
+        // Token exists → checkbox flipped green
+        document.getElementById("recaptcha-screen").style.display = "none";
+        document.getElementById("site-content").style.display = "block";
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   </script>
 </body>
 </html>
+
 
 
 
