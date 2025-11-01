@@ -965,18 +965,34 @@
 <body>
   <div id="gate">
     <h2>Verifying Access…</h2>
-    <div class="h-captcha" data-sitekey="3c7c27e0-0c96-46c0-abd4-100271821db4" data-theme="dark" data-callback="onVerified"></div>
+    <div class="h-captcha"
+         data-sitekey="3c7c27e0-0c96-46c0-abd4-100271821db4"
+         data-theme="dark"
+         data-callback="onVerified">
+    </div>
   </div>
 
   <div id="main">
     <h1>Welcome</h1>
-    <p>You're in.</p>
+    <p>You’re in. Verified and clean.</p>
   </div>
 
   <script>
     function onVerified(token) {
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
+      fetch('/verify-captcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('gate').style.display = 'none';
+          document.getElementById('main').style.display = 'block';
+        } else {
+          alert('CAPTCHA failed. Try again.');
+        }
+      });
     }
   </script>
 </body>
