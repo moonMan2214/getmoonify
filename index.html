@@ -938,56 +938,11 @@
 </body>
 </html>
 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Access Gate</title>
-  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-  <style>
-    html, body {
-      margin: 0;
-      background: #0e0e0e;
-      color: white;
-      font-family: sans-serif;
-    }
-    #gate {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 9999;
-      background: #0e0e0e;
-    }
-    #main {
-      display: none;
-      padding: 40px;
-    }
-  </style>
-</head>
-<body>
-  <div id="gate">
-    <h2>Verifying Access…</h2>
-    <div class="h-captcha"
-         data-sitekey="3c7c27e0-0c96-46c0-abd4-100271821db4"
-         data-theme="dark"
-         data-callback="onVerified">
-    </div>
-  </div>
 
-
-
-  <script>
-    function onVerified(token) {
-      // Visual-only pass — no server verification
-      document.getElementById('gate').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
-    }
   </script>
 </body>
 </html>
+
 
 
 
